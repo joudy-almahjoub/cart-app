@@ -22,13 +22,17 @@ function App() {
       localStorage.setItem('cart', JSON.stringify(list))
     }
   }
+  const emptyCart = () => {
+    setCart([])
+    localStorage.removeItem('cart')
+  }
   return (
     <StrictMode>
       <BrowserRouter>
         <MainLayout cartCount={cart?.length}>
           <Routes>
             <Route path='/' element={<Home addToCart={addToCart} />} />
-            <Route path='/cart' element={<Cart />} />
+            <Route path='/cart' element={<Cart emptyCart={emptyCart} />} />
           </Routes>
         </MainLayout>
       </BrowserRouter>

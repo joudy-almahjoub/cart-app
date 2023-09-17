@@ -5,7 +5,12 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons'
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react'
 import { Product } from '../../interfaces/Product';
-export default function Cart() {
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+
+interface props {
+    emptyCart: () => void
+}
+export default function Cart(props: props) {
     const [cartItems, setCartItems] = useState<Product[]>(() => JSON.parse(localStorage.getItem('cart') ?? '[]'))
 
     const [total, setTotal] = useState<number>(0)
@@ -43,23 +48,28 @@ export default function Cart() {
         setTotal(total)
     }
     const proceedPurchase = async (cart: Product[]) => {
-        try {
-            const result = await fetch('https://fakeapi.platzi.com/purchase', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(cart),
-            })
-            if (result.ok) {
-                return true
-            } else {
-                return false
-            }
-        } catch (err) {
-            console.error('Purchase error:', err);
-            return false
-        }
+        return await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(true)
+            }, 1000)
+        })
+        // try {
+        //     const result = await fetch('https://fakeapi.platzi.com/purchase', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify(cart),
+        //     })
+        //     if (result.ok) {
+        //         return true
+        //     } else {
+        //         return false
+        //     }
+        // } catch (err) {
+        //     console.error('Purchase error:', err);
+        //     return false
+        // }
     }
 
 
@@ -67,8 +77,10 @@ export default function Cart() {
         try {
             setPurchaseStatus('loading')
             const status = await proceedPurchase(cartItems)
+            console.log(status, 'purchase status')
             if (status) {
                 setCartItems([])
+                props.emptyCart()
                 setPurchaseStatus('success')
             } else {
                 setPurchaseStatus('error')
@@ -84,12 +96,17 @@ export default function Cart() {
     }, [cartItems])
     return (
         <>{
-            purchaseStatus === 'success' ? 'your purchase has been successfully completed' :
+            purchaseStatus === 'success' ?
+
+                <div className={styles.message}>
+                    your purchase has been successfully completed
+                </div>
+                :
                 <div className={styles.container}>
                     {
                         cartItems?.length > 0 ?
                             <>
-                                <div className={styles.itemsContainer} style={{ width: '70%' }}>
+                                <div className={styles.itemsContainer}>
                                     {
                                         cartItems?.map((item: any, index: number) => <div className={styles.item}>
                                             <div>
@@ -112,14 +129,14 @@ export default function Cart() {
                                     }
                                 </div>
 
-                                <div className={styles.itemsContainer} style={{ width: '28%', }}>
+                                <div className={styles.totalContainer}>
                                     <div className='flex justify-between'>
                                         <h3>Total:</h3>
                                         <h3>{total}$</h3>
                                     </div>
                                     <hr />
                                     <button type='button' className='btn-primary' style={{ width: '100%' }} onClick={() => handleProceedPurchases()}>
-                                        {purchaseStatus === 'loading' ? 'loading...' : 'Proceed to checout'}
+                                        {purchaseStatus === 'loading' ? <LoadingSpinner size={25} /> : 'Proceed to checout'}
                                     </button>
                                 </div>
 

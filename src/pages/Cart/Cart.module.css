@@ -2,14 +2,18 @@
     width: 100%;
     display: flex;
     padding: 10px 20px;
+    flex-direction: column;
 }
 
-.itemsContainer {
+.itemsContainer,
+.totalContainer {
     border-radius: 6px;
     padding: 10px 15px;
     border: 2px solid #303030;
-    margin: 0 3px;
+    margin: 10px 3px;
     height: fit-content;
+    width: 100%;
+
 }
 
 .item {
@@ -39,4 +43,33 @@
     font-size: 17px;
     font-weight: bold;
     margin: 0 10px;
+}
+
+.message {
+    margin: auto;
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 6px;
+    background-color: rgba(0, 128, 0, 0.575);
+    color: #ffffff;
+    width: 90%;
+    margin-top: 100px;
+}
+
+@media (min-width:1024px) {
+    .message {
+        width: 30%;
+    }
+
+    .container {
+        flex-direction: row;
+    }
+
+    .itemsContainer {
+        width: 70%;
+    }
+
+    .totalContainer {
+        width: 30%;
+    }
 }
