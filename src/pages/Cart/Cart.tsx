@@ -9,6 +9,8 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState<Product[]>(() => JSON.parse(localStorage.getItem('cart') ?? '[]'))
 
     const [total, setTotal] = useState<number>(0)
+    const [purchaseStatus, setPurchaseStatus] = useState<'loading' | 'success' | 'error'>();
+
 
     const increase = (index: number) => {
         const list: any = [...cartItems]
@@ -40,52 +42,93 @@ export default function Cart() {
         }
         setTotal(total)
     }
+    const proceedPurchase = async (cart: Product[]) => {
+        try {
+            const result = await fetch('https://fakeapi.platzi.com/purchase', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cart),
+            })
+            if (result.ok) {
+                return true
+            } else {
+                return false
+            }
+        } catch (err) {
+            console.error('Purchase error:', err);
+            return false
+        }
+    }
+
+
+    const handleProceedPurchases = async () => {
+        try {
+            setPurchaseStatus('loading')
+            const status = await proceedPurchase(cartItems)
+            if (status) {
+                setCartItems([])
+                setPurchaseStatus('success')
+            } else {
+                setPurchaseStatus('error')
+            }
+        } catch (err) {
+            console.error('Purchase error:', err);
+            setPurchaseStatus('error')
+        }
+
+    }
     useEffect(() => {
         getTotal(cartItems)
     }, [cartItems])
     return (
-        <div className={styles.container}>
-            {
-                cartItems?.length > 0 ?
-                    <>
-                        <div className={styles.itemsContainer} style={{ width: '70%' }}>
-                            {
-                                cartItems?.map((item: any, index: number) => <div className={styles.item}>
-                                    <div>
-                                        <FontAwesomeIcon onClick={() => remove(index)} icon={faTrashCan} style={{ color: 'red', }} />
-                                        <h3>{item.title}</h3>
+        <>{
+            purchaseStatus === 'success' ? 'your purchase has been successfully completed' :
+                <div className={styles.container}>
+                    {
+                        cartItems?.length > 0 ?
+                            <>
+                                <div className={styles.itemsContainer} style={{ width: '70%' }}>
+                                    {
+                                        cartItems?.map((item: any, index: number) => <div className={styles.item}>
+                                            <div>
+                                                <FontAwesomeIcon onClick={() => remove(index)} icon={faTrashCan} style={{ color: 'red', }} />
+                                                <h3>{item.title}</h3>
+                                            </div>
+                                            <div>
+                                                <h3 >{item.price}$</h3>
+                                                <p className={styles.quantity}>{item.quantity}</p>
+                                                <div>
+                                                    <span className={styles.addRemove} onClick={() => increase(index)}>
+                                                        <FontAwesomeIcon icon={faPlus} />
+                                                    </span>
+                                                    <span className={styles.addRemove} onClick={() => decrease(index)}>
+                                                        <FontAwesomeIcon icon={faMinus} />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>)
+                                    }
+                                </div>
+
+                                <div className={styles.itemsContainer} style={{ width: '28%', }}>
+                                    <div className='flex justify-between'>
+                                        <h3>Total:</h3>
+                                        <h3>{total}$</h3>
                                     </div>
-                                    <div>
-                                        <h3 >{item.price}$</h3>
-                                        <p className={styles.quantity}>{item.quantity}</p>
-                                        <div>
-                                            <span className={styles.addRemove} onClick={() => increase(index)}>
-                                                <FontAwesomeIcon icon={faPlus} />
-                                            </span>
-                                            <span className={styles.addRemove} onClick={() => decrease(index)}>
-                                                <FontAwesomeIcon icon={faMinus} />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>)
-                            }
-                        </div>
+                                    <hr />
+                                    <button type='button' className='btn-primary' style={{ width: '100%' }} onClick={() => handleProceedPurchases()}>
+                                        {purchaseStatus === 'loading' ? 'loading...' : 'Proceed to checout'}
+                                    </button>
+                                </div>
 
-                        <div className={styles.itemsContainer} style={{ width: '28%', }}>
-                            <div className='flex justify-between'>
-                                <h3>Total:</h3>
-                                <h3>{total}$</h3>
-                            </div>
-                            <hr />
-                            <button type='button' className='btn-primary' style={{ width: '100%' }}>
-                                Proceed to Checkout
-                            </button>
-                        </div>
+                            </>
 
-                    </>
-
-                    : 'cart is empty'
-            }
-        </div>
+                            : 'cart is empty'
+                    }
+                </div>
+        }
+        </>
     )
 }
