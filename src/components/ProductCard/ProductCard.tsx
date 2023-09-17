@@ -12,8 +12,9 @@ export default function ProductCard(props: props) {
             <div className={`${styles.card} shadow`}>
                 <img src={props.product.images[0]} style={{ width: '100%' }} />
                 <h3>{props.product.title}</h3>
+                <h5>{props.product.added === true ? 'product added' : 'product available (normal)'}</h5>
                 <p>{props.product.description}</p>
-                <button type='button' className='btn-primary' style={{ margin: 10, marginTop: 'auto', marginBottom: 5 }} onClick={() => props.addToCart(props.product)}>Add To Cart {props.product.price}$</button>
+                <button type='button' className='btn-primary' style={{ margin: 10, marginTop: 'auto', marginBottom: 5, cursor: 'pointer' }} onClick={() => props.addToCart(props.product)}>Add To Cart {props.product.price}$</button>
             </div>
         </div>
     )

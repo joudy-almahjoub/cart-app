@@ -15,11 +15,13 @@
 
 
 
-.card h3,
+.card h3, .card h5,
 .card p {
     padding: 5px 15px;
 }
-
+.card h5 {
+    color : blueviolet;
+}
 @media (min-width:767px) and (max-width:1024px) {
     .cardContainer {
         width: 33.33%;

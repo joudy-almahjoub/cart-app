@@ -1,0 +1,42 @@
+.container {
+    width: 100%;
+    display: flex;
+    padding: 10px 20px;
+}
+
+.itemsContainer {
+    border-radius: 6px;
+    padding: 10px 15px;
+    border: 2px solid #303030;
+    margin: 0 3px;
+    height: fit-content;
+}
+
+.item {
+    display: flex;
+    width: 100%;
+    margin: 5px 0px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.item>div {
+    display: flex;
+    align-items: center;
+
+}
+
+.item div h3 {
+    padding: 0 10px;
+}
+
+.addRemove {
+    display: block;
+    cursor: pointer;
+}
+
+.quantity {
+    font-size: 17px;
+    font-weight: bold;
+    margin: 0 10px;
+}
