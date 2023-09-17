@@ -1,0 +1,37 @@
+.cardContainer {
+    width: 100%;
+    margin-top: 10px;
+    /* flex: 1 0 auto; */
+}
+
+.card {
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 10px 5px;
+    height: 100%;
+}
+
+
+
+.card h3,
+.card p {
+    padding: 5px 15px;
+}
+
+@media (min-width:767px) and (max-width:1024px) {
+    .cardContainer {
+        width: 33.33%;
+    }
+
+    .card {
+        margin: 10px;
+    }
+}
+
+@media (min-width:1024px) {
+    .cardContainer {
+        width: 25%;
+    }
+}

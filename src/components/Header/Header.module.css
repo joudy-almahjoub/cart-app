@@ -1,0 +1,43 @@
+.navbar {
+   position: fixed;
+   top: 0;
+   width: 100%;
+   padding: 10px 20px;
+   background-color: #fff;
+   z-index: 999;
+}
+
+.nav {
+   list-style: none;
+}
+
+.nav li {
+   display: inline-block;
+}
+
+.nav li a {
+   text-decoration: none;
+   color: #000000;
+   font-size: 17px;
+   font-weight: bold;
+   transition: all .25s ease-in-out;
+   position: relative;
+}
+
+.nav li a:hover {
+   color: #d4c704;
+}
+
+.badge {
+   width: 15px;
+   height: 15px;
+   position: absolute;
+   top: -10px;
+   right: -10px;
+   background-color: red;
+   color: white;
+   font-weight: bold;
+   font-size: 10px;
+   border-radius: 100%;
+   text-align: center;
+}
