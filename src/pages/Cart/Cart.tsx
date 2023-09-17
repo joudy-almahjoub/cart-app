@@ -9,11 +9,14 @@ import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 
 interface props {
     emptyCart: () => void
+    remove: (index: number) => void
+    getTotal: (list: Product[]) => void
+    total: number
 }
 export default function Cart(props: props) {
     const [cartItems, setCartItems] = useState<Product[]>(() => JSON.parse(localStorage.getItem('cart') ?? '[]'))
 
-    const [total, setTotal] = useState<number>(0)
+    // const [total, setTotal] = useState<number>(0)
     const [purchaseStatus, setPurchaseStatus] = useState<'loading' | 'success' | 'error'>();
 
 
@@ -21,7 +24,7 @@ export default function Cart(props: props) {
         const list: any = [...cartItems]
         list[index].quantity++;
         setCartItems(list)
-        getTotal(list)
+        props.getTotal(list)
         localStorage.setItem('cart', JSON.stringify(list))
     }
     const decrease = (index: number) => {
@@ -29,47 +32,33 @@ export default function Cart(props: props) {
         if (list[index].quantity > 1)
             list[index].quantity--;
         setCartItems(list)
-        getTotal(list)
+        props.getTotal(list)
         localStorage.setItem('cart', JSON.stringify(list))
     }
-    const remove = (index: number) => {
-        const list = [...cartItems]
-        list.splice(index, 1)
-        setCartItems(list)
-        getTotal(list)
-        localStorage.setItem('cart', JSON.stringify(list))
-    }
-    const getTotal = (list: Product[]) => {
-        let total = 0;
-        for (const item of list) {
-            total += item.price * item.quantity;
+    // const remove = (index: number) => {
+    //     const list = [...cartItems]
+    //     list.splice(index, 1)
+    //     setCartItems(list)
+    //     getTotal(list)
+    //     localStorage.setItem('cart', JSON.stringify(list))
+    // }
 
-        }
-        setTotal(total)
-    }
+
+
+    // const getTotal = (list: Product[]) => {
+    //     let total = 0;
+    //     for (const item of list) {
+    //         total += item.price * item.quantity;
+
+    //     }
+    //     setTotal(total)
+    // }
     const proceedPurchase = async (cart: Product[]) => {
         return await new Promise((resolve) => {
             setTimeout(() => {
                 resolve(true)
             }, 1000)
         })
-        // try {
-        //     const result = await fetch('https://fakeapi.platzi.com/purchase', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(cart),
-        //     })
-        //     if (result.ok) {
-        //         return true
-        //     } else {
-        //         return false
-        //     }
-        // } catch (err) {
-        //     console.error('Purchase error:', err);
-        //     return false
-        // }
     }
 
 
@@ -92,7 +81,7 @@ export default function Cart(props: props) {
 
     }
     useEffect(() => {
-        getTotal(cartItems)
+        props.getTotal(cartItems)
     }, [cartItems])
     return (
         <>{
@@ -110,7 +99,7 @@ export default function Cart(props: props) {
                                     {
                                         cartItems?.map((item: any, index: number) => <div className={styles.item}>
                                             <div>
-                                                <FontAwesomeIcon onClick={() => remove(index)} icon={faTrashCan} style={{ color: 'red', }} />
+                                                <FontAwesomeIcon onClick={() => props.remove(index)} icon={faTrashCan} style={{ color: 'red', }} />
                                                 <h3>{item.title}</h3>
                                             </div>
                                             <div>
@@ -132,7 +121,7 @@ export default function Cart(props: props) {
                                 <div className={styles.totalContainer}>
                                     <div className='flex justify-between'>
                                         <h3>Total:</h3>
-                                        <h3>{total}$</h3>
+                                        <h3>{props.total}$</h3>
                                     </div>
                                     <hr />
                                     <button type='button' className='btn-primary' style={{ width: '100%' }} onClick={() => handleProceedPurchases()}>

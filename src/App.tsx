@@ -8,6 +8,7 @@ import { Product } from './interfaces/Product';
 
 function App() {
   const [cart, setCart] = useState<Product[]>(() => JSON.parse(localStorage.getItem('cart') ?? '[]'))
+  const [total, setTotal] = useState<number>(0)
 
   const addToCart = (product: Product) => {
     let list = [...cart]
@@ -22,6 +23,21 @@ function App() {
       localStorage.setItem('cart', JSON.stringify(list))
     }
   }
+  const remove = (index: number) => {
+    const list = [...cart]
+    list.splice(index, 1)
+    setCart(list)
+    getTotal(list)
+    localStorage.setItem('cart', JSON.stringify(list))
+  }
+  const getTotal = (list: Product[]) => {
+    let total = 0;
+    for (const item of list) {
+      total += item.price * item.quantity;
+
+    }
+    setTotal(total)
+  }
   const emptyCart = () => {
     setCart([])
     localStorage.removeItem('cart')
@@ -32,7 +48,7 @@ function App() {
         <MainLayout cartCount={cart?.length}>
           <Routes>
             <Route path='/' element={<Home addToCart={addToCart} />} />
-            <Route path='/cart' element={<Cart emptyCart={emptyCart} />} />
+            <Route path='/cart' element={<Cart emptyCart={emptyCart} remove={remove} getTotal={getTotal} total={total} />} />
           </Routes>
         </MainLayout>
       </BrowserRouter>
