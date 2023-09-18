@@ -11,48 +11,40 @@ interface props {
     emptyCart: () => void
     remove: (index: number) => void
     getTotal: (list: Product[]) => void
-    total: number
+    total: number,
+    cart: Product[],
+    setCart: (cart: Product[]) => void
 }
 export default function Cart(props: props) {
-    const [cartItems, setCartItems] = useState<Product[]>(() => JSON.parse(localStorage.getItem('cart') ?? '[]'))
-
-    // const [total, setTotal] = useState<number>(0)
     const [purchaseStatus, setPurchaseStatus] = useState<'loading' | 'success' | 'error'>();
 
 
     const increase = (index: number) => {
-        const list: any = [...cartItems]
+        const list: any = [...props.cart]
         list[index].quantity++;
-        setCartItems(list)
+        props.setCart(list)
         props.getTotal(list)
         localStorage.setItem('cart', JSON.stringify(list))
     }
     const decrease = (index: number) => {
-        const list = [...cartItems]
+        const list = [...props.cart]
         if (list[index].quantity > 1)
             list[index].quantity--;
-        setCartItems(list)
+        props.setCart(list)
         props.getTotal(list)
         localStorage.setItem('cart', JSON.stringify(list))
     }
-    // const remove = (index: number) => {
-    //     const list = [...cartItems]
-    //     list.splice(index, 1)
-    //     setCartItems(list)
-    //     getTotal(list)
-    //     localStorage.setItem('cart', JSON.stringify(list))
-    // }
+    const remove = (index: number) => {
+        const list = [...props.cart]
+        list.splice(index, 1)
+        props.setCart(list)
+        props.getTotal(list)
+        localStorage.setItem('cart', JSON.stringify(list))
+    }
 
 
 
-    // const getTotal = (list: Product[]) => {
-    //     let total = 0;
-    //     for (const item of list) {
-    //         total += item.price * item.quantity;
 
-    //     }
-    //     setTotal(total)
-    // }
     const proceedPurchase = async (cart: Product[]) => {
         return await new Promise((resolve) => {
             setTimeout(() => {
@@ -65,10 +57,15 @@ export default function Cart(props: props) {
     const handleProceedPurchases = async () => {
         try {
             setPurchaseStatus('loading')
-            const status = await proceedPurchase(cartItems)
+            const status = await proceedPurchase(props.cart)
             console.log(status, 'purchase status')
             if (status) {
-                setCartItems([])
+                const updatedCart = props.cart.map((product) => ({
+                    ...product,
+                    status: 'bought'
+                }))
+                localStorage.setItem('purchase', JSON.stringify(updatedCart))
+                props.setCart([])
                 props.emptyCart()
                 setPurchaseStatus('success')
             } else {
@@ -81,8 +78,8 @@ export default function Cart(props: props) {
 
     }
     useEffect(() => {
-        props.getTotal(cartItems)
-    }, [cartItems])
+        props.getTotal(props.cart)
+    }, [props.cart])
     return (
         <>{
             purchaseStatus === 'success' ?
@@ -93,13 +90,13 @@ export default function Cart(props: props) {
                 :
                 <div className={styles.container}>
                     {
-                        cartItems?.length > 0 ?
+                        props.cart?.length > 0 ?
                             <>
                                 <div className={styles.itemsContainer}>
                                     {
-                                        cartItems?.map((item: any, index: number) => <div className={styles.item}>
+                                        props.cart?.map((item: any, index: number) => <div className={styles.item}>
                                             <div>
-                                                <FontAwesomeIcon onClick={() => props.remove(index)} icon={faTrashCan} style={{ color: 'red', }} />
+                                                <FontAwesomeIcon onClick={() => remove(index)} icon={faTrashCan} style={{ color: 'red', cursor: 'pointer' }} />
                                                 <h3>{item.title}</h3>
                                             </div>
                                             <div>
@@ -125,7 +122,7 @@ export default function Cart(props: props) {
                                     </div>
                                     <hr />
                                     <button type='button' className='btn-primary' style={{ width: '100%' }} onClick={() => handleProceedPurchases()}>
-                                        {purchaseStatus === 'loading' ? <LoadingSpinner size={25} /> : 'Proceed to checout'}
+                                        {purchaseStatus === 'loading' ? <LoadingSpinner size={25} /> : 'Proceed to checkout'}
                                     </button>
                                 </div>
 

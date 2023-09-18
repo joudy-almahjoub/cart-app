@@ -18,7 +18,7 @@ function App() {
       setCart(list)
       localStorage.setItem('cart', JSON.stringify(list))
     } else {
-      list = [...cart, { ...product, added: true, quantity: 1 }]
+      list = [...cart, { ...product, added: true, quantity: 1, status: 'added' }]
       setCart(list);
       localStorage.setItem('cart', JSON.stringify(list))
     }
@@ -27,8 +27,8 @@ function App() {
     const list = [...cart]
     list.splice(index, 1)
     setCart(list)
-    getTotal(list)
     localStorage.setItem('cart', JSON.stringify(list))
+    getTotal(list)
   }
   const getTotal = (list: Product[]) => {
     let total = 0;
@@ -48,7 +48,7 @@ function App() {
         <MainLayout cartCount={cart?.length}>
           <Routes>
             <Route path='/' element={<Home addToCart={addToCart} />} />
-            <Route path='/cart' element={<Cart emptyCart={emptyCart} remove={remove} getTotal={getTotal} total={total} />} />
+            <Route path='/cart' element={<Cart emptyCart={emptyCart} remove={remove} getTotal={getTotal} total={total} cart={cart} setCart={setCart} />} />
           </Routes>
         </MainLayout>
       </BrowserRouter>

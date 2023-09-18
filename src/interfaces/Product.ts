@@ -6,5 +6,6 @@ export interface Product {
     quantity: number,
     added: boolean,
     bought: boolean,
+    status: string,
     images: string[]
 }

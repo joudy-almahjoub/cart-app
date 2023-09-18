@@ -8,7 +8,6 @@ interface props {
     addToCart: (product: Product) => void
 }
 export default function Home(props: props) {
-    const [cart, setCart] = useState<Product[]>([]);
     const API_URL = 'https://api.escuelajs.co/api/v1/products'
     const [productsList, setProducts] = useState<Product[]>([]);
     const [isError, setIsError] = useState(false)
